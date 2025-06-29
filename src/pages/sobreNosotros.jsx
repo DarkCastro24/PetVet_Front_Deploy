@@ -27,14 +27,15 @@ const SobreNosotros = () => {
   ];
 
   return (
-    <>
-      <section id="sobreNosotros" className="containerGato py-5">
+    <section id="sobreNosotros" className="container-fluid" style={{ background: '#ede8dc' }}>
+      <div className="container py-5">
         <h2 className="text-center display-5 fw-bold mb-4">Sobre nosotros</h2>
+
         <div className="row align-items-center mb-5">
-          <div className="col-auto">
+          <div className="col-12 col-md-auto text-center mb-3 mb-md-0">
             <img src={gatoIcon} alt="Logo de gatito" className="icon-gato" />
           </div>
-          <div className="col">
+          <div className="col-12 col-md">
             <p className="lead mb-0 text-justify">
               En VetiCare brindamos servicios de cuidados médicos y estéticos con una nueva visión de empatía y vanguardia,
               complementado por nuestro staff de profesionales altamente capacitados y el mejor equipo tecnológico en estudios
@@ -43,21 +44,21 @@ const SobreNosotros = () => {
           </div>
         </div>
 
-        <div className="row gy-4">
+        <div className="row gy-4 mb-5">
           {features.map(({ title, description }) => (
-            <div key={title} className="col-md-6 d-flex">
+            <div key={title} className="col-12 col-md-6 d-flex">
               <div className="me-3 flex-shrink-0">
-                <img src={gatoIcon} alt="Logo de gatito" className="icon-gato " />
+                <img src={gatoIcon} alt="Logo de gatito" className="icon-gato" />
               </div>
               <div>
-                <h3 className="display-7  fw-bold">{title}</h3>
+                <h3 className="display-7 fw-bold">{title}</h3>
                 <p className="lead mb-0 text-justify">{description}</p>
               </div>
             </div>
           ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

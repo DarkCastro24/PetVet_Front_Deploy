@@ -3,6 +3,8 @@ import { FaSearch, FaTimes } from 'react-icons/fa';
 import Layout from './layout';
 import { menuItemsVet } from '../config/layout/sidebar';
 const API_URL = import.meta.env.VITE_API_URL;
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
 
 const ExpedienteVet = () => {
   const [expedientes, setExpedientes] = useState([]);
@@ -86,7 +88,11 @@ const ExpedienteVet = () => {
       });
       setExpedientes(prev => prev.filter(x => x.id !== id));
     } catch (err) {
-      console.error('Error al eliminar expediente:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -116,7 +122,11 @@ const ExpedienteVet = () => {
       setShowModal(false);
       setForm({ nombre: '', dueño: '', peso: '', fecha: '', especie: '', raza: '', enfermedad: '', medicina: '', cirugias: '', vacunas: [] });
     } catch (err) {
-      console.error('Error al crear expediente:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -134,7 +144,11 @@ const ExpedienteVet = () => {
       setDetailData(data);
       setShowDetailModal(true);
     } catch (err) {
-      console.error('Error al cargar detalle de mascota:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -150,7 +164,11 @@ const ExpedienteVet = () => {
       setExpedientes(prev => prev.map(x => x.id === updated.id ? updated : x));
       setShowUpdateModal(false);
     } catch (err) {
-      console.error('Error al actualizar expediente:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -202,8 +220,8 @@ const ExpedienteVet = () => {
                 <span className="record-item__name flex-fill">{e.name}</span>
                 <span className="record-item__date">{new Date(e.birth_date).toLocaleDateString('es-ES')}</span>
                 <span className="record-item__created">{new Date(e.created_at).toLocaleDateString('es-ES')}</span>
-               {/* <button className="btn btn-remove" onClick={() => handleDelete(e.id)}><FaTimes /></button> */}
-                <button className="btn btn-update ms-2" style={{marginTop: '10px'}} onClick={() => handleOpenUpdate(e)}>Update</button>
+                {/* <button className="btn btn-remove" onClick={() => handleDelete(e.id)}><FaTimes /></button> */}
+                <button className="btn btn-update ms-2" style={{ marginTop: '10px' }} onClick={() => handleOpenUpdate(e)}>Update</button>
               </div>
             ))
           ) : (<p className="text-muted">No se encontraron expedientes.</p>)}
@@ -410,49 +428,49 @@ const ExpedienteVet = () => {
           </>
         )}
 
-        { showDetailModal && detailData && (
-  <>
-    <div className="modal-backdrop fade show"></div>
-    <div
-      className="modal fade show"
-      style={{ display: 'block' }}
-      tabIndex="-1"
-      onClick={() => setShowDetailModal(false)} 
-    >
-      <div
-        className="modal-dialog modal-sm modal-dialog-centered"
-        onClick={e => e.stopPropagation()}    
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Detalle de {detailData.name}</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setShowDetailModal(false)}
-            />
-          </div>
-          <div className="modal-body">
-            <p><strong>Nombre mascota:</strong> {detailData.name}</p>
-            <p><strong>Dueño:</strong> {detailData.owner.full_name}</p>
-            <p><strong>Teléfono:</strong> {detailData.owner.phone}</p>
-            <p><strong>Especie:</strong> {detailData.species.name}</p>
-            <p><strong>Raza:</strong> {detailData.breed}</p>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
+        {showDetailModal && detailData && (
+          <>
+            <div className="modal-backdrop fade show"></div>
+            <div
+              className="modal fade show"
+              style={{ display: 'block' }}
+              tabIndex="-1"
               onClick={() => setShowDetailModal(false)}
             >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </>
-)}
+              <div
+                className="modal-dialog modal-sm modal-dialog-centered"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Detalle de {detailData.name}</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowDetailModal(false)}
+                    />
+                  </div>
+                  <div className="modal-body">
+                    <p><strong>Nombre mascota:</strong> {detailData.name}</p>
+                    <p><strong>Dueño:</strong> {detailData.owner.full_name}</p>
+                    <p><strong>Teléfono:</strong> {detailData.owner.phone}</p>
+                    <p><strong>Especie:</strong> {detailData.species.name}</p>
+                    <p><strong>Raza:</strong> {detailData.breed}</p>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowDetailModal(false)}
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
     </Layout>

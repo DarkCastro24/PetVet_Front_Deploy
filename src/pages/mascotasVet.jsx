@@ -6,6 +6,9 @@ import SearchBox from '../components/search-box';
 import { menuItemsVet } from '../config/layout/sidebar';
 const API_URL = import.meta.env.VITE_API_URL;
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 const MascotasVet = () => {
   const [mascotas, setMascotas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

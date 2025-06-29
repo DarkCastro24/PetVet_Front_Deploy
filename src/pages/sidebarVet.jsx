@@ -29,7 +29,7 @@ function SidebarVet({ items, activePath, userType }) {
               className="nav-link"
               activeClassName="active"
             >
-              Administradores
+              Gerentes
             </NavLink>
           </li>
         )}

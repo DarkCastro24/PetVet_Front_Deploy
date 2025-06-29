@@ -18,7 +18,7 @@ function Dayappoint() {
 
 
 
-  const token = localStorage.getItem("token"); 
+  const token = localStorage.getItem("token");
 
   const columns = ["#", "DUI", "Nombre Completo", "Telefóno", "Horario"];
 
@@ -26,11 +26,11 @@ function Dayappoint() {
   let day = date.getDate();
   let month = date.getMonth() + 1;
   let year = date.getFullYear();
-  let today = ""; 
-  if(month < 10){
-   today = `${day}-0${month}-${year}`;
-  } else{
-     today = `${day}-${month}-${year}`;
+  let today = "";
+  if (month < 10) {
+    today = `${day}-0${month}-${year}`;
+  } else {
+    today = `${day}-${month}-${year}`;
   }
 
 
@@ -50,7 +50,12 @@ function Dayappoint() {
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          const errorText = await response.text();
+          return Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorText,
+          });
         }
 
         let index = 0;
@@ -68,11 +73,11 @@ function Dayappoint() {
           DUI: item.pet.owner.dui,
           "Nombre Completo": item.pet.owner.full_name,
           Telefóno: item.pet.owner.phone,
-        
+
           "Horario":
             item.date.startsWith("0000")
               ? "Sin cita"
-              :  item.date.toString().concat(" a las: ", item.time),
+              : item.date.toString().concat(" a las: ", item.time),
           Asistencia: item.status_id == 2 ? 'Si' : 'No',
         }));
 
@@ -80,7 +85,11 @@ function Dayappoint() {
         setAppointments(filteredData);
         setFilteredAppointments(filteredData);
       } catch (error) {
-        console.error('Fetch error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar citas',
+          text: error.message
+        });
       }
     }
 
@@ -159,11 +168,11 @@ function Dayappoint() {
                 {filteredAppointments.map((filteredAppointment) => (
                   <tr>
 
-                  <td>
-  {filteredAppointment["rowNumber"]}
-                  </td>
+                    <td>
+                      {filteredAppointment["rowNumber"]}
+                    </td>
 
-                  
+
                     {
                       col.map((col) =>
 

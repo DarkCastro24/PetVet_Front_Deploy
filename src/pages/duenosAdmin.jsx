@@ -8,6 +8,9 @@ import EditAppointmentForm from "../components/edit-appointment"
 import EditDuenoForm from "../components/edit-duenos"
 import AddButton from "../components/add-button"
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 function DuenosAdmin() {
 
 
@@ -41,7 +44,12 @@ function DuenosAdmin() {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
       }
 
 
@@ -67,7 +75,11 @@ function DuenosAdmin() {
       setOwners(filteredData);
       setFilteredOwners(filteredData);
     } catch (error) {
-      console.error('Fetch error:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
 
@@ -102,7 +114,12 @@ function DuenosAdmin() {
 
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: Failed to get duenos by id`);
+        const errorText = await response.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
       }
 
 
@@ -110,8 +127,11 @@ function DuenosAdmin() {
       console.log('Owner got:', result);
       return result;
     } catch (error) {
-      console.error('Fetch error:', error);
-      throw error;
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
 
     }
   }
@@ -132,8 +152,11 @@ function DuenosAdmin() {
       setOwnerToEdit(owner);
       setModalOpen(true);
     } catch (error) {
-      console.error("Error loading owner:", error);
-      alert("No se pudo cargar la cita para edición.");
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -148,7 +171,12 @@ function DuenosAdmin() {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
       }
 
       console.log(response.status);
@@ -157,7 +185,11 @@ function DuenosAdmin() {
       getData();
 
     } catch (error) {
-      console.error('Fetch error:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
 
@@ -187,10 +219,12 @@ function DuenosAdmin() {
 
 
         if (!response.ok) {
-          const errorText = await response.json();
-          console.error(`Error ${response.status}:`, errorText);
-          alert(`Error al agregar nuevoo dueño: ${errorText}`);
-          throw new Error(`Error ${response.status}: Failed to add new owner`);
+          const errorText = await response.text();
+          return Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorText,
+          });
         }
 
 
@@ -200,8 +234,11 @@ function DuenosAdmin() {
         getData();
 
       } catch (error) {
-        console.error('Update error:', error);
-        throw error;
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'No se pudo conectar con el servidor.',
+        });
       }
     } else {
       try {
@@ -228,10 +265,11 @@ function DuenosAdmin() {
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Error ${response.status}:`, errorText);
-          const parsedError= errorText.match(/failed on the '([^']+)' tag/);
-          alert(`Error al agregar nuevo dueño: ${parsedError}`);
-          throw new Error(`Error ${response.status}: Failed to update appointment`);
+          return Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorText,
+          });
         }
 
 
@@ -240,8 +278,11 @@ function DuenosAdmin() {
         setModalOpen(false);
         getData();
       } catch (error) {
-        console.error('Update error:', error);
-        throw error;
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'No se pudo conectar con el servidor.',
+        });
       }
     }
   }
@@ -253,6 +294,22 @@ function DuenosAdmin() {
   return (
     <Layout userName="Alison lol" menuItems={menuItemsAdmin} userType="admin">
       <div id="admin-main-container">
+        <h2 className="records-header__title mb-0 me-3" style={{
+          //backgroundColor: '#374f59',
+          height: '3rem',
+          width: '400px',
+          color: '#374f59',
+          //padding: arriba derecha abajo izquierda;
+          //padding: '1rem 1rem 2rem 3rem',
+          //margin: '1rem 1.2rem 0.5rem 5rem',
+          margin: '1rem 9rem 0.5rem 1rem',
+          border: 'none',
+          borderRadius: '50px',
+          fontSize: '3rem',
+          fontWeight: 600,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>Dueños</h2>
         <div className="search-add-row">
           <SearchBox onSearch={handleSearch} placeholder="Busque dueño por nombre" />
           <AddButton onClick={handleEdit} />

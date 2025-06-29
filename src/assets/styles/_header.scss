@@ -18,6 +18,8 @@
     flex-wrap: wrap;
     width: 100%;
 
+    position: relative; 
+ z-index: 1000; 
     .navbar-brand {
         display: flex;
         align-items: center;

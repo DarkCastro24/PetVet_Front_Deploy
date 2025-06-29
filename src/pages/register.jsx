@@ -3,6 +3,9 @@ import registerImage from "../assets/images/register/registerDog.jpg";
 import logoImage from "../assets/images/logoHeader.png";
 import { Link } from 'react-router-dom';
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 import { useForm } from 'react-hook-form';
 function Register() {
 
@@ -14,20 +17,25 @@ function Register() {
         try {
             const userData = { ...data, role_id: 1 }
 
-            console.log("Enviando datos:", userData); 
+            console.log("Enviando datos:", userData);
             const response = await fetch(`${API_URL}/api/users/register`, {
-         
-            method: 'POST', 
-            headers : {
-                'Content-Type' : 'application/json', 
-               
-            }, 
-            body: JSON.stringify(userData),
+
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+                body: JSON.stringify(userData),
             },
 
             )
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Register fallido',
+                    text: errorText,
+                });
             }
 
             if (response.ok) {
@@ -39,7 +47,11 @@ function Register() {
             console.log("The result is", result)
 
         } catch (error) {
-            console.error("Error al enviar datos", error)
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'No se pudo conectar con el servidor.',
+            });
         }
 
     }

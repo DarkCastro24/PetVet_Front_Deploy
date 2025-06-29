@@ -8,6 +8,9 @@ import UpdateAdminForm from '../components/updateAdminForm';
 import { menuItemsAdmin, superAdminMenuItems } from '../config/layout/sidebar';
 import DetailAdminInfo from '../components/detailAdminInfo';
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 const API_URL = import.meta.env.VITE_API_URL;
 const SECRET_KEY = import.meta.env.VITE_ADMIN_SECRET;
 
@@ -58,11 +61,22 @@ export default function RootAddAdmin() {
           'X-Admin-Secret': SECRET_KEY
         }
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const errorText = await response.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
+      }
       const data = await res.json();
       setAdmins(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     } finally {
       setLoading(false);
     }
@@ -83,7 +97,15 @@ export default function RootAddAdmin() {
         },
         body: JSON.stringify(newAdmin)
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const errorText = await res.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error al crear administrador',
+          text: errorText,
+        });
+      }
+      const data = await res.json();
       setShowCreateModal(false);
       setCreateForm({
         full_name: '',
@@ -95,7 +117,11 @@ export default function RootAddAdmin() {
       });
       await fetchAdmins();
     } catch (err) {
-      setError(err.message);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -151,11 +177,24 @@ export default function RootAddAdmin() {
           'X-Admin-Secret': SECRET_KEY
         }
       });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
+      }
       const data = await res.json();
       setDetailData(data);
       setShowDetailModal(true);
     } catch (err) {
-      console.error('Error al cargar detalle de administrador:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
 
@@ -175,12 +214,23 @@ export default function RootAddAdmin() {
         },
         body: JSON.stringify({ status_id: 2 })
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const errorText = await res.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
+      }
       setShowDeactivateModal(false);
       setDeactivateId(null);
       await fetchAdmins();
     } catch (err) {
-      console.error('Error al desactivar administrador:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -219,19 +269,23 @@ export default function RootAddAdmin() {
 
   return (
     <Layout menuItems={superAdminMenuItems} userType="admin">
-      <div id="admin-main-container">
-        <h2 style={{
-          height: '3rem', 
-          width: '400px', 
+      <div id="admin-main-container" className="vh-100 overflow-auto pb-5">
+        <h2 className="records-header__title mb-0 me-3" style={{
+          //backgroundColor: '#374f59',
+          height: '3rem',
+          width: '400px',
           color: '#374f59',
-          margin: '0.5rem 0 0.5rem 1rem', 
+          //padding: arriba derecha abajo izquierda;
+          //padding: '1rem 1rem 2rem 3rem',
+          //margin: '1rem 1.2rem 0.5rem 5rem',
+          margin: '1rem 9rem 0.5rem 1rem',
           border: 'none',
-          borderRadius: '50px', 
-          fontSize: '3rem', 
-          fontWeight: 600
-        }}>
-          Administradores
-        </h2>
+          borderRadius: '50px',
+          fontSize: '3rem',
+          fontWeight: 600,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>Administradores</h2>
 
         <SearchBox onSearch={setSearchTerm} placeholder="Buscar" />
 
@@ -255,10 +309,11 @@ export default function RootAddAdmin() {
         {loading && <p>Cargando administradores…</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {!loading && !error && (
-          <AdminTable rows={filteredRows} columns={adminColumns}
-            onEdit={openUpdate}
-            onDelete={handleDeactivate}
-          />
+          <div className="mb-5">
+            <AdminTable rows={filteredRows} columns={adminColumns}
+              onEdit={openUpdate}
+              onDelete={handleDeactivate}
+            /> </div>
         )}
 
         <Modal
@@ -288,17 +343,18 @@ export default function RootAddAdmin() {
           )}
           <UpdateAdminForm form={updateForm}
             setForm={setUpdateForm}
-            onSubmit={handleUpdateAdmin}/>
+            onSubmit={handleUpdateAdmin} />
         </Modal>
 
         <Modal isOpen={showDeactivateModal} onClose={cancelDeactivate}>
           <div style={{ padding: '1.5rem', textAlign: 'center' }}>
             <p>¿Deseas marcar este administrador como inactivo?</p>
             <div style={{
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: '1rem'}}>
-               <button
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '1rem'
+            }}>
+              <button
                 onClick={confirmDeactivate}
                 style={{
                   backgroundColor: '#374f59',
@@ -312,13 +368,13 @@ export default function RootAddAdmin() {
                 Aceptar
               </button>
               <button onClick={cancelDeactivate} style={{
-                  backgroundColor: '#6c757d', 
-                  color: '#fff',
-                  border: 'none', 
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.25rem', 
-                  cursor: 'pointer'
-                }}
+                backgroundColor: '#6c757d',
+                color: '#fff',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.25rem',
+                cursor: 'pointer'
+              }}
               >
                 Cancelar
               </button>

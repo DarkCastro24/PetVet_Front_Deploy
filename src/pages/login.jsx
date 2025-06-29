@@ -7,9 +7,12 @@ import { Link } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 
 function Login() {
-     const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
 
 
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -24,18 +27,26 @@ function Login() {
                 body: JSON.stringify(data),
             });
 
-            const result = await response.json();
+
 
             if (!response.ok) {
-                console.error('Login fallido:', result.message);
-                return;
+                const errorText = await response.text();
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Login fallido',
+                    text: errorText,
+                });
             }
+
+            const result = await response.json();
 
             localStorage.setItem('token', result.token);
 
             localStorage.setItem('role_id', result.user.role_id);
 
             localStorage.setItem('user', JSON.stringify(result.user));
+
+            localStorage.setItem('email', JSON.stringify(result.user.email));
 
             //Manda a otra vista segun su rol del user
 
@@ -48,7 +59,11 @@ function Login() {
             }
 
         } catch (error) {
-            console.error('Error al enviar datos', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'No se pudo conectar con el servidor.',
+            });
         }
     };
 

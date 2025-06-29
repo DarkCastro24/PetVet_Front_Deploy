@@ -25,6 +25,7 @@ import RouteProtectedUser from './utils/routeProtectedUser';
 
 import Dashboard from './pages/dashboard';
 
+
 function App() {
   return (
 
@@ -42,6 +43,10 @@ function App() {
         <Route path="/superadmin/administradores" element={< RootAddAdmin/>} />
 
         <Route path="/admin/dashboard" element={< Dashboard/>} />
+
+        <Route path="/admin/citas" element={< CitasAdmin/>} />
+
+        <Route path="/admin/veterinarios" element={< VeterinariansAdmin/>} />
 
 
         {/*

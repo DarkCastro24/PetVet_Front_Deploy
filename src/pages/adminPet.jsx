@@ -10,6 +10,9 @@ import UpdatePetForm from '../components/updatePetFormAdmin';
 import PetDetail from '../components/petDetailAdmin';
 const API_URL = import.meta.env.VITE_API_URL;
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
 function AdminPet() {
   const [rows, setRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,10 +29,10 @@ function AdminPet() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [deactivateId, setDeactivateId] = useState(null);
-   const [detailData, setDetailData] = useState(null);
+  const [detailData, setDetailData] = useState(null);
 
   const adminTypeId = localStorage.getItem('admin_type_id');
-  const isRoot  = adminTypeId === '1';
+  const isRoot = adminTypeId === '1';
   const sidebarItems = isRoot ? superAdminMenuItems : menuItemsAdmin;
   const userType = isRoot ? 'superadmin' : 'admin';
 
@@ -56,7 +59,11 @@ function AdminPet() {
     })
       .then(res => res.json())
       .then(data => setExpedientes(Array.isArray(data) ? data : []))
-      .catch(err => console.error('Error al cargar expedientes:', err));
+      .catch(err => Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar expedientes',
+        text: err.message || 'No se pudieron cargar los expedientes.',
+      }));
 
     fetch(`${API_URL}/api/users`, {
       headers: {
@@ -65,8 +72,11 @@ function AdminPet() {
     })
       .then(res => res.json())
       .then(data => setOwners(data.filter(u => u.role_id === 1)))
-      .catch(err => console.error('Error al cargar dueños:', err));
-
+      .catch(err => Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar dueños',
+        text: err.message || 'No se pudieron cargar los dueños.',
+      }));
     fetch(`${API_URL}/api/species`, {
       headers: {
         Authorization: token ? `Bearer ${token}` : ''
@@ -74,7 +84,11 @@ function AdminPet() {
     })
       .then(res => res.json())
       .then(data => setSpeciesList(data))
-      .catch(err => console.error('Error al cargar especies:', err));
+      .catch(err => Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar especies',
+        text: err.message || 'No se pudieron cargar las especies.',
+      }));
   }, [token]);
 
   useEffect(() => {
@@ -95,7 +109,11 @@ function AdminPet() {
       })
         .then(r => r.json())
         .then(data => setOwnerSuggestions(data))
-        .catch(() => setOwnerSuggestions([]));
+        .catch(err => Swal.fire({
+          icon: 'error',
+          title: 'Error al buscar dueños',
+          text: err.message || 'No se pudieron obtener sugerencias.',
+        }));
     }, 300);
 
     return () => clearTimeout(timeout);
@@ -157,7 +175,11 @@ function AdminPet() {
         prev.map(p => p.id === updated.id ? updated : p)
       );
     } catch (err) {
-      console.error('Error al desactivar mascota:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     } finally {
       setShowDeactivateModal(false);
       setDeactivateId(null);
@@ -192,7 +214,11 @@ function AdminPet() {
       setDetailData(data);
       setShowDetailModal(true);
     } catch (err) {
-      console.error('Error al cargar detalle de mascota:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
 
@@ -218,10 +244,32 @@ function AdminPet() {
         prev.map(x => (x.id === updated.id ? updated : x))
       );
       setShowUpdateModal(false);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Mascota actualizada',
+        text: 'Información de mascota actualizada correctamente.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
     } catch (err) {
-      console.error('Error al actualizar expediente:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
+
+  const initialCreateForm = {
+    nombre: '',
+    dueño: '',
+    peso: '',
+    fecha: '',
+    especie: '',
+    raza: ''
+  };
 
   async function handleCreateSubmit(form) {
     try {
@@ -242,33 +290,57 @@ function AdminPet() {
         },
         body: JSON.stringify(body)
       });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error al crear mascota',
+          text: errorText
+        });
+      }
+
       const newPet = await res.json();
       setExpedientes(prev => [newPet, ...prev]);
       setShowCreateModal(false);
+      setCreateForm(initialCreateForm);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Mascota creada',
+        text: 'Información de la mascota registrada correctamente.',
+        showConfirmButton: false
+      });
     } catch (err) {
-      console.error('Error al crear expediente:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   }
 
   return (
     //<Layout menuItems={sidebarItems} userType={userType} >
     <Layout menuItems={menuItemsAdmin} userType="admin">
-      <h2 className="records-header__title mb-0 me-3" style={{
-        //backgroundColor: '#374f59',
-        height: '3rem',
-        width: '400px',
-        color: '#374f59',
-        //padding: arriba derecha abajo izquierda;
-        //padding: '1rem 1rem 2rem 3rem',
-        margin: '1rem 1.2rem 0.5rem 5rem',
-        border: 'none',
-        borderRadius: '50px',
-        fontSize: '3rem',
-        fontWeight: 600,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>Mascotas</h2>
-      <div id="admin-main-container">
+      <div id="admin-main-container" className="vh-100 overflow-auto pb-5">
+        <h2 className="records-header__title mb-0 me-3" style={{
+          //backgroundColor: '#374f59',
+          height: '3rem',
+          width: '400px',
+          color: '#374f59',
+          //padding: arriba derecha abajo izquierda;
+          //padding: '1rem 1rem 2rem 3rem',
+         // margin: '1rem 1.2rem 0.5rem 5rem',
+         margin: '1rem 9rem 0.5rem 1.5rem',
+          border: 'none',
+          borderRadius: '50px',
+          fontSize: '3rem',
+          fontWeight: 600,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>Mascotas</h2>
+
 
         <SearchBox
           onSearch={handleSearch}
@@ -299,9 +371,11 @@ function AdminPet() {
         {loading && <p>Cargando mascotas…</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {!loading && !error && (
+          <div className="mb-5">
           <AdminTable rows={filteredRows} columns={petColumns} onEdit={handleOpenUpdate}
             onDelete={handleDeactivate}
             onView={handleOpenDetail} />
+            </div>
         )}
         <Modal
           isOpen={showCreateModal}

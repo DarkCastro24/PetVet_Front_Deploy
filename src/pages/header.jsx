@@ -31,7 +31,7 @@ const Header = () => {
 
             <div className={`navbar-menu ${isOpen ? 'open' : ''}`}>
                 <ul className="navbar-nav">
-                    <li className="nav-item"><Link className="nav-link" to="/expediente">Inicio</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/">Inicio</Link></li>
                     <li className="nav-item"><Link className="nav-link" to="/login">Iniciar sesión</Link></li>
                     <li className="nav-item"><Link className="nav-link" to="/register">Registrarse</Link></li>
                     <li className="nav-item"><a className="nav-link" href="#servicios">¿Quiénes somos?</a></li>

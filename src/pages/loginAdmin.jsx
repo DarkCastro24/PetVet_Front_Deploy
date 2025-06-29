@@ -6,6 +6,10 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL;
 
+import Swal from 'sweetalert2';
+import "sweetalert2/dist/sweetalert2.min.css";
+
+
 function LoginAdmin() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
@@ -17,41 +21,52 @@ function LoginAdmin() {
                 password: data.password,
             };
 
+
+
             const response = await fetch(`${API_URL}/api/admins/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
 
-            const result = await response.json();
+
+
 
             if (!response.ok) {
-                console.error('Login fallido:', result.message || result);
-                return;
+                const errorText = await response.text();
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Register fallido',
+                    text: errorText,
+                });
             }
 
-            // 1) Guardar el token
+            const result = await response.json();
+
             localStorage.setItem('token', result.token);
 
-            // 2) Guardar el admin_type_id
             localStorage.setItem('admin_type_id', result.admin.admin_type_id);
 
-            // 3) Guardar info del admin
             localStorage.setItem('admin', JSON.stringify(result.admin));
 
-            // 4) Redirigir según admin_type_id
+            localStorage.setItem('email', JSON.stringify(result.admin.email));
+
             switch (result.admin.admin_type_id) {
                 case 1:
                     navigate('/admin', { replace: true });
                     break;
-                case 2: 
+                case 2:
                     navigate('/admin', { replace: true });
                     break;
                 default:
                     navigate('/', { replace: true });
             }
         } catch (error) {
-            console.error('Error al enviar datos', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'No se pudo conectar con el servidor.',
+            });
         }
     };
 
