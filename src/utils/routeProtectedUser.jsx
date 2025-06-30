@@ -1,7 +1,7 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, Outlet } from 'react-router-dom';
 
-export default function RouteProtectedUser({ allowedRoles = [], children }) {
+function RouteProtectedUser({ allowedRoles = [], children }) {
   const token  = localStorage.getItem('token');
   const roleId = parseInt(localStorage.getItem('role_id'), 10);
   const loc    = useLocation();
@@ -12,5 +12,7 @@ export default function RouteProtectedUser({ allowedRoles = [], children }) {
   if (!allowedRoles.includes(roleId)) {
     return <Navigate to="/" replace />;
   }
-  return children;
+  return <Outlet />;
 }
+
+export default RouteProtectedUser

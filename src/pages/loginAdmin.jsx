@@ -36,7 +36,7 @@ function LoginAdmin() {
                 const errorText = await response.text();
                 return Swal.fire({
                     icon: 'error',
-                    title: 'Register fallido',
+                    title: 'Login fallido',
                     text: errorText,
                 });
             }
@@ -53,10 +53,10 @@ function LoginAdmin() {
 
             switch (result.admin.admin_type_id) {
                 case 1:
-                    navigate('/admin', { replace: true });
+                    navigate('/admin/dashboard', { replace: true });
                     break;
                 case 2:
-                    navigate('/admin', { replace: true });
+                    navigate('/admin/dashboard', { replace: true });
                     break;
                 default:
                     navigate('/', { replace: true });

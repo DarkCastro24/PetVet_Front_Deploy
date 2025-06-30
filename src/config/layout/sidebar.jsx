@@ -1,9 +1,14 @@
 export const menuItemsVet = [
   { name: 'Citas', href: '/citas' },
-  { name: 'Perfil', href: '/perfil' },
-  { name: 'Dueños', href: '/duenos' },
   { name: 'Mascotas', href: '/mascotas' },
   { name: 'Expedientes', href: '/expediente' }
+];
+
+
+export const menuItemsOwner = [
+  { name: 'Citas', href: '/mis_citas' },
+  { name: 'Mascotas', href: '/mis_mascotas' },
+  { name: 'Perfil', href: '/profile' },
 ];
 
 

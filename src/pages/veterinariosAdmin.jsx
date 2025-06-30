@@ -7,7 +7,6 @@ import Modal from "../components/admin-edit-modal"
 import EditVetForm from "../components/edit-veterinarians"
 import AddButton from "../components/add-button"
 
-
 import Swal from 'sweetalert2';
 import "sweetalert2/dist/sweetalert2.min.css";
 
@@ -149,15 +148,6 @@ function VeterinariansAdmin() {
       return;
     }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errorText,
-      });
-    }
-
     try {
       const vet = await getById(vetId);
       setVeterinarianToEdit(vet);
@@ -196,12 +186,10 @@ function VeterinariansAdmin() {
 
 
         if (!response.ok) {
-          const errorText = await response.text();
-          return Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorText,
-          });
+          const errorText = await response.json();
+          console.error(`Error ${response.status}:`, errorText);
+          alert(`Error al agregar nuevo veterinario: ${errorText}`);
+          throw new Error(`Error ${response.status}: Failed to add new veterinarian`);
         }
 
 
@@ -211,11 +199,8 @@ function VeterinariansAdmin() {
         getData();
 
       } catch (error) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'No se pudo conectar con el servidor.',
-        });
+        console.error('Add error:', error);
+        throw error;
       }
     } else {
       try {
@@ -233,12 +218,7 @@ function VeterinariansAdmin() {
 
 
         if (!response.ok) {
-          const errorText = await response.text();
-          return Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorText,
-          });
+          throw new Error(`Error ${response.status}: Failed to update appointment`);
         }
 
 
@@ -247,11 +227,8 @@ function VeterinariansAdmin() {
         setModalOpen(false);
         getData();
       } catch (error) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'No se pudo conectar con el servidor.',
-        });
+        console.error('Update error:', error);
+        throw error;
       }
 
 
@@ -269,12 +246,7 @@ function VeterinariansAdmin() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        return Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: errorText,
-        });
+        throw new Error('Network response was not ok');
       }
 
 
@@ -282,11 +254,7 @@ function VeterinariansAdmin() {
       getData();
 
     } catch (error) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.message || 'No se pudo conectar con el servidor.',
-      });
+      console.error('Fetch error:', error);
     }
   }
 
@@ -300,31 +268,13 @@ function VeterinariansAdmin() {
 
   return (
     <Layout userName="Alison lol" menuItems={menuItemsAdmin} userType="admin">
-      <div id="admin-main-container" className="vh-100 overflow-auto pb-5">
-        <h2 className="records-header__title mb-0 me-3" style={{
-          //backgroundColor: '#374f59',
-          height: '3rem',
-          width: '400px',
-          color: '#374f59',
-          //padding: arriba derecha abajo izquierda;
-          //padding: '1rem 1rem 2rem 3rem',
-          //margin: '1rem 1.2rem 0.5rem 5rem',
-          margin: '1rem 9rem 0.5rem 1rem',
-          border: 'none',
-          borderRadius: '50px',
-          fontSize: '3rem',
-          fontWeight: 600,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>Veterinarios</h2>
-
+      <div id="admin-main-container">
         <div className="search-add-row">
           <SearchBox onSearch={handleSearch} placeholder="Busque por nombre" />
           <AddButton onClick={handleEdit} />
         </div>
-        <div className="mb-5">
-          <AdminTable rows={filteredVets} columns={admminVeterinarianColumns} onEdit={handleEdit} onDelete={deleteVeterinarian} />
-        </div>
+        <AdminTable rows={filteredVets} columns={admminVeterinarianColumns} onEdit={handleEdit} onDelete={deleteVeterinarian} />
+
 
         <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
           <EditVetForm initialData={veterinarianToEdit} onSubmit={updateVeterinarian} />

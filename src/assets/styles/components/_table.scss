@@ -35,7 +35,6 @@
     }
 
     @include respond-to($tablet) {
-      
       th,
       td {
         min-width: 5rem;

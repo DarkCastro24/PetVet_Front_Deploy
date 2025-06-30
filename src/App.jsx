@@ -13,6 +13,8 @@ import Dayappoint from './pages/appointments';
 import CitasAdmin from './pages/citasAdmin';
 import VeterinariansAdmin from './pages/veterinariosAdmin';
 import AdminPet from './pages/adminPet';
+import ProfileVet from './pages/profileVet';
+
 
 import EditModal from './components/admin-edit-modal';
 import DuenosAdmin from './pages/duenosAdmin';
@@ -22,64 +24,56 @@ import LoginAdmin from './pages/loginAdmin';
 import RootAddAdmin from './pages/rootAddAdmin';
 
 import RouteProtectedUser from './utils/routeProtectedUser';
+import RouteProtectedAdmin from './utils/routeProtectedAdmin';
 
 import Dashboard from './pages/dashboard';
-
+import CitasOwner from './pages/citasOwner';
+import MascotasOwner from './pages/mascotasOwner';
 
 function App() {
   return (
 
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
 
+        {/* las generales para todos */}
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin/login" element={< LoginAdmin />} />
 
-        <Route path="/admin/mascotas" element={< AdminPet/>} />
+        {/* Para dueños */}
+        <Route element={<RouteProtectedUser allowedRoles={[1]} />}>
+          <Route path="/profile" element={< ProfileVet />} />
+          <Route path="/mis_citas" element={< CitasOwner />} />
+          <Route path="/mis_mascotas" element={< MascotasOwner />} />
+        </Route>
 
-        <Route path="/admin/login" element={< LoginAdmin/>} />
-
-        <Route path="/superadmin/administradores" element={< RootAddAdmin/>} />
-
-        <Route path="/admin/dashboard" element={< Dashboard/>} />
-
-        <Route path="/admin/citas" element={< CitasAdmin/>} />
-
-        <Route path="/admin/veterinarios" element={< VeterinariansAdmin/>} />
+        {/* Para veterinarios */}
+        <Route element={<RouteProtectedUser allowedRoles={[2]} />}>
+          <Route path="/citas" element={<Dayappoint />} />
+          <Route path="/expediente" element={<Expediente />} />
+          <Route path="/mascotas" element={<MascotasVet />} />
+        </Route>
 
 
-        {/*
-        <Route path="/expediente" element={<Expediente />} />
-        <Route path='/mascotas' element={<MascotasVet />} />
-        <Route path="/citas" element={<Dayappoint />} /> */}
+        {/* Para admins*/}
+        <Route element={<RouteProtectedAdmin allowedAdminTypes={[1, 2]} />}>
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/citas" element={<CitasAdmin />} />
+          <Route path="/admin/veterinarios" element={<VeterinariansAdmin />} />
+          <Route path="/admin/duenos" element={<DuenosAdmin />} />
+          <Route path="/admin/mascotas" element={<AdminPet />} />
+        </Route>
 
-        <Route path="/citas"
-          element={ <RouteProtectedUser allowedRoles={[2]}>
-              <Dayappoint />
-        </RouteProtectedUser>} />
 
-        <Route path="/expediente"
-          element={ <RouteProtectedUser allowedRoles={[2]}>
-              <Expediente />
-        </RouteProtectedUser>} />
+        {/* PSolo para root */}
+        <Route element={<RouteProtectedAdmin allowedAdminTypes={[1]} />}>
+          <Route path="/superadmin/administradores" element={<RootAddAdmin />} />
+        </Route>
 
-        <Route path="/mascotas"
-          element={ <RouteProtectedUser allowedRoles={[2]}>
-              <MascotasVet />
-        </RouteProtectedUser>} />
 
-        <Route path="/citas" element={<Dayappoint />} />
 
-         <Route path="/admin" element={< CitasAdmin/>} />
-
-         <Route path="/modal" element={< EditModal/>} />
-        <Route path="/admin/duenos" element={< DuenosAdmin/>} />
-        
-         <Route path="/admin/vet" element={< VeterinariansAdmin/>} />
-
-        
-      
       </Routes>
     </Router>
   );

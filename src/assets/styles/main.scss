@@ -20,11 +20,14 @@
 @use './components/editAppoint' as *;
 @use './components/editForm' as *;
 @use './pages/adminOwners' as *;
-
-@use './components/modalExpVet';
+@use './components/userAppointment' as *;
+@use './components/modalExpVet' as *;
 
 
 @use './pages/adminPet';
+@use './pages/profileVet' as *;
+
+
 
 body,
 html,

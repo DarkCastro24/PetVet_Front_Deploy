@@ -51,7 +51,7 @@ function Login() {
             //Manda a otra vista segun su rol del user
 
             if (result.user.role_id === 1) {
-                navigate('/citas', { replace: true });
+                navigate('/mis_citas', { replace: true });
             } else if (result.user.role_id === 2) {
                 navigate('/expediente', { replace: true });
             } else {

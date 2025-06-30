@@ -28,9 +28,7 @@ function DuenosAdmin() {
 
   ];
 
-
   // functions
-
   async function getData() {
     let index = 0;
     const currentPage = 1;
@@ -42,7 +40,6 @@ function DuenosAdmin() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         return Swal.fire({
@@ -51,12 +48,9 @@ function DuenosAdmin() {
           text: errorText,
         });
       }
-
-
       const data = await response.json();
       console.log(data)
       const filteredData = data.map((item) => ({
-
         id: item.id,
         rowNumber: (currentPage - 1) * itemsPerPage + index + 1,
         DUI: item.dui,
@@ -64,13 +58,7 @@ function DuenosAdmin() {
         Teléfono: item.phone,
         "Correo Electrónico": item.email,
         Estado: item.status_id == 1 ? "Activo" : "Desactivado",
-
-
-
-
-
       }));
-
       console.log('Filtered data:', filteredData);
       setOwners(filteredData);
       setFilteredOwners(filteredData);
@@ -87,10 +75,8 @@ function DuenosAdmin() {
     getData();
   }, []);
 
-
   const handleSearch = (search) => {
     if (search.trim() === '') {
-
       setFilteredOwners(owners);
     } else {
       const filtered = filteredOwners.filter((registro) => registro["Nombre Completo"].toLowerCase().includes(search.toLowerCase())
@@ -101,18 +87,13 @@ function DuenosAdmin() {
 
   async function getById(id) {
     try {
-
       const response = await fetch(`${API_URL}/api/users/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         }
-
       });
-
-
-
       if (!response.ok) {
         const errorText = await response.text();
         return Swal.fire({
@@ -121,8 +102,6 @@ function DuenosAdmin() {
           text: errorText,
         });
       }
-
-
       const result = await response.json();
       console.log('Owner got:', result);
       return result;
@@ -132,12 +111,8 @@ function DuenosAdmin() {
         title: 'Error',
         text: error.message || 'No se pudo conectar con el servidor.',
       });
-
     }
   }
-
-
-
 
   const handleEdit = async (ownerId) => {
     if (!ownerId) {
@@ -145,10 +120,8 @@ function DuenosAdmin() {
       setModalOpen(true);
       return;
     }
-
     try {
       const owner = await getById(ownerId);
-
       setOwnerToEdit(owner);
       setModalOpen(true);
     } catch (error) {
@@ -160,7 +133,6 @@ function DuenosAdmin() {
     }
   };
 
-
   async function deleteOwner(id) {
     try {
       const response = await fetch(`${API_URL}/api/users/${id}`, {
@@ -169,7 +141,6 @@ function DuenosAdmin() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         return Swal.fire({
@@ -178,12 +149,9 @@ function DuenosAdmin() {
           text: errorText,
         });
       }
-
       console.log(response.status);
-
       console.log('Appointment deleted successfully');
       getData();
-
     } catch (error) {
       await Swal.fire({
         icon: 'error',
@@ -215,9 +183,6 @@ function DuenosAdmin() {
 
           }),
         });
-
-
-
         if (!response.ok) {
           const errorText = await response.text();
           return Swal.fire({
@@ -226,13 +191,10 @@ function DuenosAdmin() {
             text: errorText,
           });
         }
-
-
         const result = await response.json();
         console.log('Owner added:', result);
         setModalOpen(false);
         getData();
-
       } catch (error) {
         await Swal.fire({
           icon: 'error',
@@ -260,21 +222,19 @@ function DuenosAdmin() {
 
           }),
         });
-
-
-
         if (!response.ok) {
           const errorText = await response.text();
-          return Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorText,
-          });
+          console.error(`Error ${response.status}:`, errorText);
+          const parsedError= errorText.match(/failed on the '([^']+)' tag/);
+          alert(`Error al agregar nuevo dueño: ${parsedError}`);
+          throw new Error(`Error ${response.status}: Failed to update appointment`);
         }
-
-
         const result = await response.json();
-        console.log('Owners updated:', result);
+        Swal.fire({
+          icon: 'success',
+          title: 'Usuario actualizado',
+          text: 'Información actualizada con éxito'
+        });
         setModalOpen(false);
         getData();
       } catch (error) {
@@ -314,17 +274,10 @@ function DuenosAdmin() {
           <SearchBox onSearch={handleSearch} placeholder="Busque dueño por nombre" />
           <AddButton onClick={handleEdit} />
         </div>
-
-
-        <AdminTable rows={filteredOwners} columns={adminOwnerColumns} onEdit={handleEdit} onDelete={deleteOwner} />
-
-
+        <AdminTable rows={filteredOwners} columns={adminOwnerColumns} onEdit={handleEdit} onDelete={deleteOwner}/>
         <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-          <EditDuenoForm initialData={ownerToEdit} onSubmit={updateOwner} />
-
+        <EditDuenoForm initialData={ownerToEdit} onSubmit={updateOwner} />
         </Modal>
-
-
       </div>
     </Layout>
   )

@@ -6,7 +6,6 @@ function SidebarVet({ items, activePath, userType }) {
   const admin_type_id = localStorage.getItem('admin_type_id');
 
 
-
   return (
     <nav className={`sidebar-menu d-flex flex-column p-3 ${userType === 'vet' ? 'vet-sidebar' : 'admin-sidebar'}`}>
       <ul className="nav flex-column h-100">

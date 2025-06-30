@@ -174,6 +174,11 @@ function AdminPet() {
       setExpedientes(prev =>
         prev.map(p => p.id === updated.id ? updated : p)
       );
+      Swal.fire({
+        icon: 'success',
+        title: 'Mascota inactiva',
+        text: 'Estatus actualizado con éxito'
+      });
     } catch (err) {
       await Swal.fire({
         icon: 'error',
@@ -331,8 +336,8 @@ function AdminPet() {
           color: '#374f59',
           //padding: arriba derecha abajo izquierda;
           //padding: '1rem 1rem 2rem 3rem',
-         // margin: '1rem 1.2rem 0.5rem 5rem',
-         margin: '1rem 9rem 0.5rem 1.5rem',
+          // margin: '1rem 1.2rem 0.5rem 5rem',
+          margin: '1rem 9rem 0.5rem 1.5rem',
           border: 'none',
           borderRadius: '50px',
           fontSize: '3rem',
@@ -372,10 +377,10 @@ function AdminPet() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {!loading && !error && (
           <div className="mb-5">
-          <AdminTable rows={filteredRows} columns={petColumns} onEdit={handleOpenUpdate}
-            onDelete={handleDeactivate}
-            onView={handleOpenDetail} />
-            </div>
+            <AdminTable rows={filteredRows} columns={petColumns} onEdit={handleOpenUpdate}
+              onDelete={handleDeactivate}
+              onView={handleOpenDetail} />
+          </div>
         )}
         <Modal
           isOpen={showCreateModal}

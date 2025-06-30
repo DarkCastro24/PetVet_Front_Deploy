@@ -54,7 +54,11 @@ const MascotasVet = () => {
         />
       </div>
 
-      <section className="petVetView row g-4 px-4">
+      <section className="petVetView row g-4 px-4" style={{
+        maxHeight: '70vh',
+        overflowY: 'auto',
+        padding: '0 2rem'
+      }}>
         {mascotasFiltradas.map(m => {
           const age = calculateAge(m.birth_date);
           return (

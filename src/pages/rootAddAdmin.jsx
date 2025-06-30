@@ -116,6 +116,12 @@ export default function RootAddAdmin() {
         admin_type_id: ''
       });
       await fetchAdmins();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Administrador creado',
+        text: 'Datos ingresados con éxito'
+      });
     } catch (err) {
       await Swal.fire({
         icon: 'error',
@@ -144,13 +150,26 @@ export default function RootAddAdmin() {
         })
       });
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
+        const errorText = await res.text();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText,
+        });
       }
       setShowUpdateModal(false);
       await fetchAdmins();
+      Swal.fire({
+        icon: 'success',
+        title: 'Administrador actualizado',
+        text: 'Datos actualizados con éxito'
+      });
     } catch (err) {
-      setUpdateError(err.message);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo conectar con el servidor.',
+      });
     }
   };
 
@@ -193,7 +212,7 @@ export default function RootAddAdmin() {
       await Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: error.message || 'No se pudo conectar con el servidor.',
+        text: err.message || 'No se pudo conectar con el servidor.',
       });
     }
   }
@@ -225,6 +244,12 @@ export default function RootAddAdmin() {
       setShowDeactivateModal(false);
       setDeactivateId(null);
       await fetchAdmins();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Administrador desactivado',
+        text: 'Estado actualizado con éxito'
+      });
     } catch (err) {
       await Swal.fire({
         icon: 'error',

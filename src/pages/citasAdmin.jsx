@@ -252,9 +252,14 @@ function CitasAdmin() {
 
 
       const result = await response.json();
-      console.log('Appointment updated:', result);
+      Swal.fire({
+              icon: 'success',
+              title: 'Cita actualizada',
+              text: 'Información actualizada con éxito'
+            });
       setModalOpen(false);
       getData();
+
     } catch (error) {
       await Swal.fire({
         icon: 'error',
@@ -285,7 +290,11 @@ function CitasAdmin() {
 
       console.log(response.status);
 
-      console.log('Appointment deleted successfully');
+      Swal.fire({
+              icon: 'success',
+              title: 'Cita eliminada',
+              text: 'Cita cancelada con éxito'
+            });
       getData();
 
     } catch (error) {
@@ -334,8 +343,6 @@ function CitasAdmin() {
 
         <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
           <EditAppointmentForm initialData={appointmentToEdit} onSubmit={updateAppointment} />
-
-
         </Modal>
 
 
